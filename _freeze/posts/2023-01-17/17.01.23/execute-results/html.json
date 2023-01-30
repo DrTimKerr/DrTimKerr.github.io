@@ -1,0 +1,16 @@
+{
+  "hash": "5ebdf4fc67e6bbe49736d837e8074830",
+  "result": {
+    "markdown": "---\ntitle: \"17.01.2023\"\nauthor: \"Tim Kerr\"\ndate: \"2023-01-17\"\noutput: html_document\n---\n\n\n# Stan\n\n### Vectors and Declarations\n\n    int x[y];\n\nMeans y instances of your variable x if x is \\[1,2,3\\], y should be 3\n\n    vector[x] y[z]\n\nMeans a vector called y, with z columns, and x rows. Or a vector of z instances of x element vectors.\n\n$\\left[ \\begin{array}{} 1 & 1 & ... & z \\\\ 2 & 2 & ... & z \\\\ ... & ... & ... & z\\\\ x & x & x & x \\end{array} \\right]$\n\n### Linking choice and value\n\nValue is the internal associative value of a participant. I initially tried to keep the RW model simple, and enforce a 1:1 mapping of value to choice (expectancy ratings). But for the life of me, and after a week invested in Stan, it just wouldn't work. The outputs were identical if I commented out the model section, as when it was active.\n\nIt was only when choice is linked via a distribution to value, that it actually works.\n\nQuite why it cant estimate a simple learning rate, without this linking distribtiuon, I do not know. More reading required, perhaps.\n\nThe Lei Zhang models all use a softmax (categorical logistic regression), which I didn't see the importance of. This obviously wont apply to scales of 1-9.\n\nOther distributions to try will be normal, and the beta distribution, which allows for more accuracy.\n\nI finally get the reason for the beta distribution!\n",
+    "supporting": [
+      "17.01.23_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -1,0 +1,92 @@
+---
+title: "05.01.23"
+author: Tim
+date: "2023-01-05"
+categories: [r, stan]
+---
+
+# Introduction
+
+This is my attempt to build a Rescorla-Wagner (RW) model, and apply it to FLARe data. This model will be built using Stan. I will start with a basic model, and increase complexity as I go.
+
+I am using a random sample of 10 participants. They will be from multiple studies, so this cannot be considered 'peeking' at the data. The aim is to make the output parameter distributions look reasonable, then apply the model to more data.
+
+The data files are made via another script. I will convert data from scratch at a later time.
+
+## Setup
+
+```{r, setup, include=FALSE}
+knitr::opts_knit$set(root.dir = "/Users/timkerr/FLARe/RW_05.01.23")
+```
+
+```{r echo=FALSE}
+setwd("/Users/timkerr/FLARe/RW_05.01.23") # Set working directory
+
+palette.colors(palette = "Okabe-Ito") # colourblind palette
+
+library(tidyverse) # for any data manipulation
+
+library(rstan) # for Stan
+```
+
+## Initial import of data, aquiring sample of 10 to work with
+
+```{r echo=FALSE}
+
+plus <- read_csv("./Data/acq_plus_335.csv", col_names = FALSE, show_col_types = FALSE) # all CS+ rating scores, row = participant, column = trial number 1-12
+
+minus <- read_csv("./Data/acq_minus_335.csv", col_names = FALSE, show_col_types = FALSE) # all CS- rating scores, as above
+
+scream_plus <- read_csv("./Data/bayes_screams_acq.csv", col_names = FALSE, show_col_types = FALSE) # all screams (US), 1 = scream, 0 = no scream
+
+
+set.seed(28397456)
+random10 <- sample(1:335, 10, replace=FALSE) # 10 random numbers as vector
+
+plus_sample <- plus[random10,] # 10 participants from CS+ dataset
+minus_sample <- minus[random10,] # the same 10 participants from CS+ dataset
+scream_plus_sample <- scream_plus[random10,] # the corroborating scream (US) data from same 10 participants 
+
+scream_minus_sample <- matrix(0L,nrow = 10, ncol = 12)
+
+```
+
+## Initial graphing
+
+I can plot these 10 participants, to somewhat recreate the acquisition plots in the literature. This shows an initial shape to the acquisition, at individual level, but is usually averaged for further analysis.
+
+I can also show some individual plots, to show a relationship between US and expectancy ratings. This is where the learning rate parameter, alpha, is demonstrated. And possibly tau, the choice variability / consistency parameter
+
+```{r}
+
+## Create a tibble to plot the 10 participants. Some manipulation of variable type to make plotting easier, such as subject number as factor so colours are distinct on graph, rather than a gradient which is the default for continuous data or integer type. Trial number as integer so it sorts the x axis in numerical order. You can make it factor and specify the order with a vector, but I dont want to type out all that. 
+
+plus_plot <- plus_sample %>% 
+  add_column(subject = 1:10, .before = TRUE) %>% 
+  pivot_longer(
+  !subject,
+  names_to = 'trial',
+  values_to = 'rating') 
+plus_plot$trial <- gsub('X','',as.character(plus_plot$trial))
+plus_plot$trial <- as.integer(plus_plot$trial)
+plus_plot$subject <- as.factor(plus_plot$subject)
+
+## Separate tibble to plot the mean and sd of the 10 participants. 
+
+mean_plus_plot <- plus_plot %>% 
+  group_by(trial) %>% 
+  summarise(mean_expectancy_rating_per_trial = mean(rating, na.rm = TRUE), sd_expectancy_rating_per_trial = sd(rating, na.rm = TRUE))
+
+## Better attempt at graphing from two tibbles. Not sure how to fix error bars yet. 
+  
+ggplot(NULL) +
+  geom_point(data = plus_plot, aes(x = trial, y = rating, group = subject, colour = subject)) +
+  geom_line(data = plus_plot, aes(trial, rating, group = subject, colour = subject)) +
+  scale_x_continuous(breaks = seq(1,12,1)) +
+  scale_y_continuous(breaks = seq(1,9,1)) +
+  geom_line(data = mean_plus_plot, aes(x = trial, y = mean_expectancy_rating_per_trial)) +
+  geom_point(data = mean_plus_plot, aes(x = trial, y = mean_expectancy_rating_per_trial), size = 3)
+  
+  # geom_errorbar(data = mean_plus_plot, aes(x = trial, ymin = mean_expectancy_rating_per_trial - sd_expectancy_rating_per_trial, ymax = mean_expectancy_rating_per_trial + sd_expectancy_rating_per_trial), width = 0.2)
+
+```

@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tim Kerr">
+<meta name="dcterms.date" content="2023-01-30">
+
+<title>../../PhD_Blog - RL_30.01.23</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">PhD_Blog</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">RL_30.01.23</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Tim Kerr </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 30, 2023</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>Setup</p>
+<p>Functions</p>
+<div class="cell">
+
+</div>
+<p>Data</p>
+<div class="cell">
+
+</div>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>To use computational / cognitive modelling approaches to extract more parameters from FLARe data, which can later be used to a) find differences between measurements of groups (in validation study), and/or b) to correlate with genetic or phenotypic data from TEDS and/or GLAD.</p>
+<p>The software used to build models and extract parameters is Stan. Stan allows one to program bayesian models, capturing and using the uncertainty within parameter estimation (rather than using means per frequentist approaches).</p>
+<p>A simple example is using Stan to estimate the probability of a biased coin. If we flip a coin 12 times, and see 9 heads, we might assume the pribability of heads is 0.75. However, this is based on limited data, and you cant measure/show the uncertainty.</p>
+<p>You want to know the probability of the coin being biased to 0.75 heads, given the data of 9 heads in 12 trials. Theta represents the model, or (unknown) probability.</p>
+<p>i.e.&nbsp;<span class="math inline">\(p(Heads\mid N,\theta)\)</span></p>
+<p>And the number of heads will pertain to the binomial distribution:</p>
+<p><span class="math inline">\(heads \sim Binomial(N,\theta)\)</span></p>
+<div class="cell" data-output.var="heads">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> { <span class="co">//known observation data</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; h;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; N;</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; theta;</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">// theta ~ uniform(0,1);</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  h ~ binomial(N, theta);</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> log_lik;</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> heads;</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  log_lik = binomial_lpmf(h | N, theta);</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  heads = binomial_rng(N, theta);</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Stan uses Markov Chain Monte Carlo sampling, to estimate the parameter. One chain is run per CPU core. Each chain samples a point on the distribution. It is rewarded for samples near the peak/mean of the distribution. It then moves to another area of the distribution. In this instance, it does this 1000 times. Given the reward, it thus converges around this mean, which you can see in the trace plot.</p>
+<p>This probability density function (PDF), graphically shows the uncertainty contained within the parameter estimate. The red area denotes the highest density interval (HDI), set here to its default of 0.8/80%. If more data were introduced, the uncertainty would reduce.</p>
+<p>Stan can also generate data based upon the parameter estimate, from the 4*1000 samples. The histogram shows 9 heads being the most likely based on the 4*1000 samples.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL 'a57dca310d1928b2ee4bc7cb5276c4f4' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 2.4e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 0.006199 seconds (Warm-up)
+Chain 1:                0.006124 seconds (Sampling)
+Chain 1:                0.012323 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'a57dca310d1928b2ee4bc7cb5276c4f4' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 3e-06 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.03 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 0.006536 seconds (Warm-up)
+Chain 2:                0.006617 seconds (Sampling)
+Chain 2:                0.013153 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'a57dca310d1928b2ee4bc7cb5276c4f4' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 3e-06 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.03 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 0.006694 seconds (Warm-up)
+Chain 3:                0.006323 seconds (Sampling)
+Chain 3:                0.013017 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL 'a57dca310d1928b2ee4bc7cb5276c4f4' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 1e-06 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.01 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 0.006556 seconds (Warm-up)
+Chain 4:                0.006083 seconds (Sampling)
+Chain 4:                0.012639 seconds (Total)
+Chain 4: </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$summary
+              mean     se_mean        sd        2.5%        25%        50%
+theta    0.7132458 0.002977411 0.1173131   0.4622676  0.6346924  0.7232075
+log_lik -1.8128515 0.015684167 0.6319924  -3.5720612 -1.9772618 -1.5695601
+heads    8.5695000 0.044862658 2.0776787   4.0000000  7.0000000  9.0000000
+lp__    -8.9031007 0.018172299 0.7260527 -11.0087807 -9.0722529 -8.6189080
+               75%      97.5%    n_eff     Rhat
+theta    0.7994954  0.9087166 1552.443 1.004564
+log_lik -1.4005660 -1.3549262 1623.681 1.002898
+heads   10.0000000 12.0000000 2144.800 1.002835
+lp__    -8.4350018 -8.3762300 1596.307 1.003694
+
+$c_summary
+, , chains = chain:1
+
+         stats
+parameter       mean        sd        2.5%        25%        50%        75%
+  theta    0.7034403 0.1220785   0.4499461  0.6207978  0.7150049  0.7961614
+  log_lik -1.8495497 0.6713904  -3.6680190 -2.0153223 -1.6051594 -1.4084611
+  heads    8.4690000 2.1108042   4.0000000  7.0000000  9.0000000 10.0000000
+  lp__    -8.9207156 0.7102808 -10.9576006 -9.1610119 -8.6449259 -8.4421599
+         stats
+parameter      97.5%
+  theta    0.8968506
+  log_lik -1.3548804
+  heads   12.0000000
+  lp__    -8.3762945
+
+, , chains = chain:2
+
+         stats
+parameter       mean        sd        2.5%        25%        50%        75%
+  theta    0.7080988 0.1166642   0.4570998  0.6335021  0.7177761  0.7927339
+  log_lik -1.8120667 0.6505674  -3.6454792 -1.9772742 -1.5570039 -1.3985253
+  heads    8.4890000 2.0890771   4.0000000  7.0000000  9.0000000 10.0000000
+  lp__    -8.8874360 0.7311442 -10.7931361 -9.0483744 -8.5967650 -8.4265006
+         stats
+parameter      97.5%
+  theta    0.9017759
+  log_lik -1.3548051
+  heads   12.0000000
+  lp__    -8.3761784
+
+, , chains = chain:3
+
+         stats
+parameter       mean        sd        2.5%       25%        50%       75%
+  theta    0.7130037 0.1120249   0.4731105  0.636666  0.7214262  0.791345
+  log_lik -1.7785873 0.5933537  -3.4430740 -1.932749 -1.5431655 -1.395346
+  heads    8.5680000 1.9766849   4.0000000  7.000000  9.0000000 10.000000
+  lp__    -8.8597447 0.7001664 -10.8360958 -9.012821 -8.5883750 -8.427869
+         stats
+parameter      97.5%
+  theta    0.9062153
+  log_lik -1.3548590
+  heads   12.0000000
+  lp__    -8.3762556
+
+, , chains = chain:4
+
+         stats
+parameter       mean        sd        2.5%        25%        50%        75%
+  theta    0.7284403 0.1169341   0.4772971  0.6476205  0.7393609  0.8178019
+  log_lik -1.8112024 0.6084888  -3.4942731 -1.9486326 -1.5777260 -1.4043339
+  heads    8.7520000 2.1220271   4.0000000  7.0000000  9.0000000 10.0000000
+  lp__    -8.9445064 0.7594309 -11.2375994 -9.1174701 -8.6363056 -8.4409566
+         stats
+parameter      97.5%
+  theta    0.9191709
+  log_lik -1.3552179
+  heads   12.0000000
+  lp__    -8.3761907</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ci_level: 0.8 (80% intervals)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>outer_level: 0.95 (95% intervals)</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-4-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Now to look at FLARe data, which, while more complex than a coin flip, shares some similarities. There is an unknown parameter to the participants, the reinforcement rate of the US (75%). They experience the US as happening or not happening, so could be said to be binomial in distribution. This happens over 12 trials.</p>
+<p>The first plot shows 10 participants individual ratings over 12 trials, and the group mean in black. This individual variation is the thing I hope models can explain.</p>
+<p>The second plot shows a single participant. This participant appears to do the experiment correctly, and reacts as expected to US. It also appears similar to the mean.</p>
+<p>For now, for simplicity, I am just going to model the CS+ acquisition.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 3 rows containing missing values (geom_point).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<hr>
+</section>
+<section id="simulation-of-rw-and-learning-rates-in-r" class="level1">
+<h1>Simulation of RW and learning rates in R</h1>
+<p>Simple graphs of RW updating.</p>
+<p>Top left graph is the actual data, plotted.</p>
+<p>The three other graphs show the value updating, given low, medium, and high learning rates.</p>
+</section>
+<section id="the-rw-model" class="level1">
+<h1>The RW model</h1>
+<p><span class="math inline">\(\alpha\)</span> - Learning rate (free parameter)</p>
+<p><span class="math inline">\(PE\)</span> - reward prediction error (reward - current expectation)</p>
+<p><span class="math inline">\(V\)</span> - value (subjective)</p>
+<p><span class="math inline">\(R\)</span> - reward (US = 1, no US = 0)</p>
+<p><span class="math inline">\(t\)</span> - trial (1,2,…,12)</p>
+<p><span class="math inline">\(\text{Value Update: } V_t = V_{t-1}+\alpha*PE_{t-1}\)</span></p>
+<p><span class="math inline">\(\text{Prediction Error: } PE_{t-1} = R_{t-1} - V_{t-1}\)</span></p>
+<p><span class="math inline">\(V_t = V_{t-1} + \alpha(R_{t-1} - V_{t-1})\)</span></p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<hr>
+</section>
+<section id="data-processing-steps" class="level1">
+<h1>Data processing steps</h1>
+<p>Expectancy rating of 1, 2, …, 9 is categorical. I have scaled this to a continuous distribution between 0 and 1, to represent (participant’s subjective) probability.</p>
+<p>Scale is 9 steps between <span class="math inline">\(\frac{0.5}{9}\)</span> and <span class="math inline">\(1\)</span> in <span class="math inline">\(\frac{1}{9}\)</span> increments.</p>
+<p>US / Scream is considered a ‘reward’, and has value of <span class="math inline">\(1\)</span>. No US has a value of <span class="math inline">\(0\)</span>.</p>
+<hr>
+</section>
+<section id="model-1---rescorla-wagner-choice-normalvaluesigma" class="level1">
+<h1>Model 1 - Rescorla Wagner, Choice ~ Normal(value,sigma)</h1>
+<section id="model-and-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="model-and-parameters">Model and Parameters</h3>
+<p>RW value updating, via learning rate parameter <span class="math inline">\(lr\)</span>.</p>
+<p>Value mapped to participant choice / expectancy rating via a normal distribution. Mean <span class="math inline">\(\mu\)</span> is value for that trial. Sigma <span class="math inline">\(\sigma\)</span> is estimated by the model.</p>
+</section>
+<section id="outputs" class="level3">
+<h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
+<p>Log Likelihood extracted per participant and trial. Leave one out cross validation (LOOCV) and WAIC calculated from this. (For model comparison)</p>
+<p>Histogram of generated data for trial 9, showing normal distribution.</p>
+<p>Final plot is mean of generated choices from model in blue, and actual choice data, all from participant one. Not sure how to use this data yet, possibly some sort of divergance score.</p>
+<div class="cell" data-output.var="normal">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; ntrials;          </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; nsub;</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>,<span class="kw">upper</span>=<span class="dv">1</span>&gt; choice[nsub,ntrials]; <span class="co">//array of size nTrials (12 intigers)</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=-<span class="dv">1</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; reward[nsub,ntrials]; </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>,<span class="kw">upper</span>=<span class="dv">1</span>&gt; lr[nsub];</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma[nsub];  </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> v[nsub,ntrials];</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> pe[nsub,ntrials];       <span class="co">// prediction error</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span>:nsub) {</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  v[s,<span class="dv">1</span>] = <span class="fl">0.5</span>;</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:(ntrials<span class="dv">-1</span>)) { </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    pe[s,t] = reward[s,t] - v[s,t];</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    v[s,t+<span class="dv">1</span>] = v[s,t] + lr[s] * pe[s,t]; </span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  }  </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:ntrials) {</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    choice[s,t] ~ normal (v[s,t],sigma[s]);</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> log_lik[nsub,ntrials];</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> choice_pred[nsub,ntrials];</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>  choice_pred = rep_array(-<span class="dv">999</span>,nsub,ntrials);</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> v[nsub,ntrials];</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> pe[nsub,ntrials];      </span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span>:nsub) {</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>  v[s,<span class="dv">1</span>] = <span class="fl">0.5</span>;</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:(ntrials<span class="dv">-1</span>)) { </span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    pe[s,t] = reward[s,t] - v[s,t];</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    v[s,t+<span class="dv">1</span>] = v[s,t] + lr[s] * pe[s,t]; </span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>  }  </span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:ntrials) {</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    log_lik[s,t] = normal_lpdf(choice[s,t] | v[s,t],sigma[s]);</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>    choice_pred[s,t] = normal_rng(v[s,t],sigma[s]);</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL '5875f43ba02dc332fb6935055510e2bc' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 5e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.5 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 0.234605 seconds (Warm-up)
+Chain 1:                0.183151 seconds (Sampling)
+Chain 1:                0.417756 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL '5875f43ba02dc332fb6935055510e2bc' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 2.2e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 0.23803 seconds (Warm-up)
+Chain 2:                0.18511 seconds (Sampling)
+Chain 2:                0.42314 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL '5875f43ba02dc332fb6935055510e2bc' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 2e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.2 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 0.238742 seconds (Warm-up)
+Chain 3:                0.180912 seconds (Sampling)
+Chain 3:                0.419654 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL '5875f43ba02dc332fb6935055510e2bc' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 2.2e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 0.247028 seconds (Warm-up)
+Chain 4:                0.185413 seconds (Sampling)
+Chain 4:                0.432441 seconds (Total)
+Chain 4: </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ci_level: 0.8 (80% intervals)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>outer_level: 0.95 (95% intervals)</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ci_level: 0.8 (80% intervals)
+outer_level: 0.95 (95% intervals)</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-8-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Relative effective sample sizes ('r_eff' argument) not specified.
+For models fit with MCMC, the reported PSIS effective sample sizes and 
+MCSE estimates will be over-optimistic.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Some Pareto k diagnostic values are too high. See help('pareto-k-diagnostic') for details.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 
+9 (7.5%) p_waic estimates greater than 0.4. We recommend trying loo instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-8-4.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-8-5.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="model-2---rescorla-wagner-choice-betaalphabeta" class="level1">
+<h1>Model 2 - Rescorla Wagner, Choice ~ Beta(alpha,beta)</h1>
+<section id="model-and-parameters-1" class="level3">
+<h3 class="anchored" data-anchor-id="model-and-parameters-1">Model and Parameters</h3>
+<p>RW value updating, via learning rate parameter <span class="math inline">\(lr\)</span>.</p>
+<p>Value mapped to participant choice / expectancy rating via a beta distribution. Mean <span class="math inline">\(\mu\)</span> is value for that trial. Sigma <span class="math inline">\(\sigma\)</span> is estimated by the model. (and called beta)</p>
+<p>Beta distribution is more flexible than normal. It is governed by two shaping parameters, alpha and beta. These can be derived from mean and variance:</p>
+<p><span class="math inline">\(\alpha = \mu(\frac{\mu(1 - \mu)}{\sigma - 1})\)</span></p>
+<p><span class="math inline">\(\beta = (1 - \mu)(\frac{\mu(1 - \mu)}{\sigma - 1})\)</span></p>
+</section>
+<section id="outputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
+<p>As model 1. Log Likelihood extracted per participant and trial. Leave one out cross validation (LOOCV) and WAIC calculated from this. (For model comparison)</p>
+<p>Histogram showing generated data of trial 9, showing beta distribution, skewed towards high probability.</p>
+<p>Final plot is mean of generated choices from model in blue, and actual choice data, all from participant one.</p>
+<div class="cell" data-output.var="beta">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; ntrials;          </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; nsub;</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>,<span class="kw">upper</span>=<span class="dv">1</span>&gt; choice[nsub,ntrials]; <span class="co">//array of size nTrials (12 intigers)</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=-<span class="dv">1</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; reward[nsub,ntrials]; </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>,<span class="kw">upper</span>=<span class="dv">1</span>&gt; lr[nsub];</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; beta[nsub];  </span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> v[nsub,ntrials];</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> pe[nsub,ntrials];       <span class="co">// prediction error</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> shape_alpha[nsub,ntrials];</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> shape_beta[nsub,ntrials];</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">//beta ~ normal(0,1);</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span>:nsub) {</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  v[s,<span class="dv">1</span>] = <span class="fl">0.5</span>;</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:(ntrials<span class="dv">-1</span>)) { </span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>    pe[s,t] = reward[s,t] - v[s,t];</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>    v[s,t+<span class="dv">1</span>] = v[s,t] + lr[s] * pe[s,t]; </span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>  }  </span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:ntrials) {</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>    shape_alpha[s,t] = v[s,t] * ((v[s,t] * (<span class="dv">1</span>-v[s,t]) / beta[s]));</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    shape_beta[s,t] = (<span class="dv">1</span>-v[s,t]) * ((v[s,t] * (<span class="dv">1</span>-v[s,t]) / beta[s]));</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>    choice[s,t] ~ beta(shape_alpha[s,t],shape_beta[s,t]);</span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> log_lik[nsub,ntrials];</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> choice_pred[nsub,ntrials];</span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>  choice_pred = rep_array(-<span class="dv">999</span>,nsub,ntrials);</span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> v[nsub,ntrials];</span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> pe[nsub,ntrials];      </span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> shape_alpha[nsub,ntrials];</span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> shape_beta[nsub,ntrials];</span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span>:nsub) {</span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>  v[s,<span class="dv">1</span>] = <span class="fl">0.5</span>;</span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:(ntrials<span class="dv">-1</span>)) { </span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>    pe[s,t] = reward[s,t] - v[s,t];</span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>    v[s,t+<span class="dv">1</span>] = v[s,t] + lr[s] * pe[s,t]; </span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>  }  </span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span>:ntrials) {</span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>    shape_alpha[s,t] = v[s,t] * ((v[s,t] * (<span class="dv">1</span>-v[s,t]) / beta[s]));</span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>    shape_beta[s,t] = (<span class="dv">1</span>-v[s,t]) * ((v[s,t] * (<span class="dv">1</span>-v[s,t]) / beta[s]));</span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>    log_lik[s,t] = beta_lpdf(choice[s,t] | shape_alpha[s,t], shape_beta[s,t]);</span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>    choice_pred[s,t] = beta_rng(shape_alpha[s,t], shape_beta[s,t]);</span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL 'f2f34ad5742d062c2187462b6d9968c2' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 0.000107 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.07 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 0.688469 seconds (Warm-up)
+Chain 1:                0.679535 seconds (Sampling)
+Chain 1:                1.368 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'f2f34ad5742d062c2187462b6d9968c2' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 5.9e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.59 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 0.650694 seconds (Warm-up)
+Chain 2:                0.635476 seconds (Sampling)
+Chain 2:                1.28617 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'f2f34ad5742d062c2187462b6d9968c2' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 5e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.5 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 0.65126 seconds (Warm-up)
+Chain 3:                0.681068 seconds (Sampling)
+Chain 3:                1.33233 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL 'f2f34ad5742d062c2187462b6d9968c2' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 5.3e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.53 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 0.654405 seconds (Warm-up)
+Chain 4:                0.621782 seconds (Sampling)
+Chain 4:                1.27619 seconds (Total)
+Chain 4: </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>'pars' not specified. Showing first 10 parameters by default.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ci_level: 0.8 (80% intervals)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>outer_level: 0.95 (95% intervals)</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ci_level: 0.8 (80% intervals)
+outer_level: 0.95 (95% intervals)</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-10-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Relative effective sample sizes ('r_eff' argument) not specified.
+For models fit with MCMC, the reported PSIS effective sample sizes and 
+MCSE estimates will be over-optimistic.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Some Pareto k diagnostic values are slightly high. See help('pareto-k-diagnostic') for details.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 
+4 (3.3%) p_waic estimates greater than 0.4. We recommend trying loo instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-10-4.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-10-5.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Compare the two models. Beta model has lower WAIC, so is the superior model.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       elpd_diff se_diff
+model2   0.0       0.0  
+model1 -34.8       5.7  </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Accessing waic using '$' is deprecated and will be removed in a
+future release. Please extract the waic estimate from the 'estimates' component
+instead.
+
+Warning: Accessing waic using '$' is deprecated and will be removed in a
+future release. Please extract the waic estimate from the 'estimates' component
+instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Accessing waic using '$' is deprecated and will be removed in a
+future release. Please extract the waic estimate from the 'estimates' component
+instead.
+
+Warning: Accessing waic using '$' is deprecated and will be removed in a
+future release. Please extract the waic estimate from the 'estimates' component
+instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="RL_23.01.23_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<!-- Ridge plots to show estimated distribution density. Shows the advantage of beta distribution over normal, which is inflexible and inappropriate given upper bounds of probability at 1. -->
+<!-- ```{r} -->
+<!-- gen_data <- extract(fit_normal) -->
+<!-- gen_data <- gen_data$choice_pred -->
+<!-- library(ggridges) -->
+<!-- ggplot(gen_data_tibble, aes(x = gen_data_tibble[,1,], y = gen_data_tibble[,1,1:12])) + geom_density_ridges() -->
+<!-- gen_data_tib <- as.tibble(gen_data[,1,]) -->
+<!-- tib2 <- gen_data_tib %>% pivot_longer(cols = starts_with('V'), names_to = 'Trial', values_to = 'Rating') -->
+<!-- tib2$Trial <- gsub('V10','W10',as.character(tib2$Trial)) -->
+<!-- tib2$Trial <- gsub('V11','W11',as.character(tib2$Trial)) -->
+<!-- tib2$Trial <- gsub('V12','W12',as.character(tib2$Trial)) -->
+<!-- # tib2$Trial <- as.integer(tib2$Trial) -->
+<!-- single_subject_expectancy_tib <- single_subject_expectancy %>% as.tibble() %>% pivot_longer(cols = starts_with('X'), names_to = 'Trial', values_to = 'Rating') -->
+<!-- single_subject_expectancy_tib$Trial <- gsub('X10','Y10',as.character(single_subject_expectancy_tib$Trial)) -->
+<!-- single_subject_expectancy_tib$Trial <- gsub('X11','Y11',as.character(single_subject_expectancy_tib$Trial)) -->
+<!-- single_subject_expectancy_tib$Trial <- gsub('X12','Y12',as.character(single_subject_expectancy_tib$Trial)) -->
+<!-- ggplot(tib2, aes(x = Trial, y = Rating, group = Trial)) + geom_density_ridges(aes(fill = Trial)) -->
+<!-- choice_1 <- scale_er(choice) -->
+<!-- choice_1_df <- data.frame(Trial = c('V1','V2','V3','V4','V5','V6','V7','V8','V9','W10','W11','W12'), Rating = choice_1 )  -->
+<!-- ggplot(tib2, aes(y = Trial, x = Rating)) + geom_density_ridges(scale = 1) + geom_point(data = choice_1_df, col = 'blue') + xlim(0,1.2) -->
+<!-- order <- c('V1','V2','V3','V4','V5','V6','V7','V8','V9','V10','V11','V12') -->
+<!-- mean(gen_data_tib$V2) -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- gen_data <- extract(fit_beta) -->
+<!-- gen_data <- gen_data$choice_pred -->
+<!-- library(ggridges) -->
+<!-- ggplot(gen_data_tibble, aes(x = gen_data_tibble[,1,], y = gen_data_tibble[,1,1:12])) + geom_density_ridges() -->
+<!-- gen_data_tib <- as.tibble(gen_data[,1,]) -->
+<!-- tib2 <- gen_data_tib %>% pivot_longer(cols = starts_with('V'), names_to = 'Trial', values_to = 'Rating') -->
+<!-- tib2$Trial <- gsub('V10','W10',as.character(tib2$Trial)) -->
+<!-- tib2$Trial <- gsub('V11','W11',as.character(tib2$Trial)) -->
+<!-- tib2$Trial <- gsub('V12','W12',as.character(tib2$Trial)) -->
+<!-- # tib2$Trial <- as.integer(tib2$Trial) -->
+<!-- single_subject_expectancy_tib <- single_subject_expectancy %>% as.tibble() %>% pivot_longer(cols = starts_with('X'), names_to = 'Trial', values_to = 'Rating') -->
+<!-- single_subject_expectancy_tib$Trial <- gsub('X10','Y10',as.character(single_subject_expectancy_tib$Trial)) -->
+<!-- single_subject_expectancy_tib$Trial <- gsub('X11','Y11',as.character(single_subject_expectancy_tib$Trial)) -->
+<!-- single_subject_expectancy_tib$Trial <- gsub('X12','Y12',as.character(single_subject_expectancy_tib$Trial)) -->
+<!-- ggplot(tib2, aes(x = Trial, y = Rating, group = Trial)) + geom_density_ridges(aes(fill = Trial)) -->
+<!-- choice_1 <- scale_er(choice) -->
+<!-- choice_1_df <- data.frame(Trial = c('V1','V2','V3','V4','V5','V6','V7','V8','V9','W10','W11','W12'), Rating = choice_1 )  -->
+<!-- ggplot(tib2, aes(y = Trial, x = Rating)) + geom_density_ridges(scale = 1) + geom_point(data = choice_1_df, col = 'blue') + xlim(0,1.2) -->
+<!-- order <- c('V1','V2','V3','V4','V5','V6','V7','V8','V9','V10','V11','V12') -->
+<!-- mean(gen_data_tib$V2) -->
+<!-- ``` -->
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
