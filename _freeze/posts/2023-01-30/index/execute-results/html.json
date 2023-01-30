@@ -1,0 +1,16 @@
+{
+  "hash": "d5a77c04beb3b11aa8468c0ffb4c20b6",
+  "result": {
+    "markdown": "---\ntitle: 'test'\nauthor: 'Tim'\n\n---\n\n\n\nText\n\n# Header\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\na <- 34\nprint(a)\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] 34\n```\n:::\n\n```{.r .cell-code}\nhist(a)\n```\n\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-1-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
