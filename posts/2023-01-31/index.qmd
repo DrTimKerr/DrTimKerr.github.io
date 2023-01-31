@@ -1,0 +1,43 @@
+---
+title: "The Beta Distribution via Mean and SD"
+author: "Tim"
+date: today
+---
+
+A real sticking point in trying to fit the beta distribution to the data, was working out the alpha and beta parameters to the distribution, from the mean and SD of the data.
+
+Assuming choice (expectancy rating) is drawn from a beta distribution:
+
+$Choice \sim Beta(\alpha , \beta)$
+
+Then the mean and variance should be per this [textbook](https://batch.libretexts.org/print/url=https://stats.libretexts.org/Courses/Saint_Mary%27s_College_Notre_Dame/MATH_345__-_Probability_%28Kuter%29/4%3A_Continuous_Random_Variables/4.8%3A_Beta_Distributions.pdf)
+
+$\mu = \frac{\alpha}{\alpha + \beta}$
+
+$\sigma^2 = \frac{\alpha\beta}{(\alpha + \beta)^2(\alpha + \beta + 1)}$
+
+Thinking of the beta distribution as all the choices the participant could make based on their associative value for that trial, it makes sense to cast the mean as Value, and the variance / standard deviation as something for Stan to estimate. This variance, representing uncertainty, or optimism / pessimism, or some other set of biases, is likely to differ between participants, and indeed might vary trial to trial.
+
+The internet gives many different rearranged versions of the above equations, putting alpha and beta on the LHS. [For example](https://stats.stackexchange.com/questions/12232/calculating-the-parameters-of-a-beta-distribution-using-the-mean-and-variance)
+
+$\alpha = \left(\frac{1-\mu}{\sigma^2} - \frac{1}{\mu}\right)\mu^2$
+
+$\beta=\alpha \left(\frac{1}{\mu}-1\right)$
+
+However, this only works within certain bounds:
+
+$\mu \in (0,1)$
+
+$\sigma^2 \in (0,0.5^2)$ (given variance cannot be lower than $\mu(1-\mu)$ term
+
+So I can either constrain this parameter in Stan excessively, or find another way to estimate the parameters.
+
+This is another way:
+
+$\alpha = \mu(\frac{\mu(1 - \mu)}{\sigma - 1})$
+
+$\beta = (1 - \mu)(\frac{\mu(1 - \mu)}{\sigma - 1})$
+
+Gleaned from this [website](http://quantdevel.com/public/CSP2017/ModelingProportionsAndProbabilities.pdf).
+
+I'll need to look into this, to see if it is valid. I will go with it for now, as it seems to work.

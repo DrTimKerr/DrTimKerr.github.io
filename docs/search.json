@@ -46,7 +46,7 @@
     "href": "index.html",
     "title": "PhD_Blog",
     "section": "",
-    "text": "Tim\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nJan 17, 2023\n\n\nTim Kerr\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nr\n\n\nstan\n\n\n\n\n\n\n\n\n\n\n\nJan 5, 2023\n\n\nTim\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nInvalid Date\n\n\nTim Kerr\n\n\n\n\n\n\nNo matching items"
+    "text": "Tim\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nJan 31, 2023\n\n\nTim\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nJan 31, 2023\n\n\nTim Kerr\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nJan 17, 2023\n\n\nTim Kerr\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nr\n\n\nstan\n\n\n\n\n\n\n\n\n\n\n\nJan 5, 2023\n\n\nTim\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -54,5 +54,12 @@
     "title": "About",
     "section": "",
     "text": "About this blog"
+  },
+  {
+    "objectID": "posts/2023-01-31/index.html",
+    "href": "posts/2023-01-31/index.html",
+    "title": "The Beta Distribution via Mean and SD",
+    "section": "",
+    "text": "Assuming choice (expectancy rating) is drawn from a beta distribution:\n\\(Choice \\sim Beta(\\alpha , \\beta)\\)\nThen the mean and variance should be per this textbook\n\\(\\mu = \\frac{\\alpha}{\\alpha + \\beta}\\)\n\\(\\sigma^2 = \\frac{\\alpha\\beta}{(\\alpha + \\beta)^2(\\alpha + \\beta + 1)}\\)\nThinking of the beta distribution as all the choices the participant could make based on their associative value for that trial, it makes sense to cast the mean as Value, and the variance / standard deviation as something for Stan to estimate. This variance, representing uncertainty, or optimism / pessimism, or some other set of biases, is likely to differ between participants, and indeed might vary trial to trial.\nThe internet gives many different rearranged versions of the above equations, putting alpha and beta on the LHS. For example\n\\(\\alpha = \\left(\\frac{1-\\mu}{\\sigma^2} - \\frac{1}{\\mu}\\right)\\mu^2\\)\n\\(\\beta=\\alpha \\left(\\frac{1}{\\mu}-1\\right)\\)\nHowever, this only works within certain bounds:\n\\(\\mu \\in (0,1)\\)\n\\(\\sigma^2 \\in (0,0.5^2)\\) (given variance cannot be lower than \\(\\mu(1-\\mu)\\) term\nSo I can either constrain this parameter in Stan excessively, or find another way to estimate the parameters.\nThis is another way:\n\\(\\alpha = \\mu(\\frac{\\mu(1 - \\mu)}{\\sigma - 1})\\)\n\\(\\beta = (1 - \\mu)(\\frac{\\mu(1 - \\mu)}{\\sigma - 1})\\)\nGleaned from this website.\nI’ll need to look into this, to see if it is valid. I will go with it for now, as it seems to work."
   }
 ]
