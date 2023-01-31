@@ -38,6 +38,6 @@ $\alpha = \mu(\frac{\mu(1 - \mu)}{\sigma - 1})$
 
 $\beta = (1 - \mu)(\frac{\mu(1 - \mu)}{\sigma - 1})$
 
-Gleaned from this [website](http://quantdevel.com/public/CSP2017/ModelingProportionsAndProbabilities.pdf).
+Gleaned from this [website](http://quantdevel.com/CSP2017/ModelingProportionsAndProbabilities.pdf).
 
 I'll need to look into this, to see if it is valid. I will go with it for now, as it seems to work.
