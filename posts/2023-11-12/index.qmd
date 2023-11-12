@@ -1,0 +1,430 @@
+---
+title: "Noise & Bimodal"
+author: Tim
+date: 2023-11-12
+categories: [r, stan]
+execute: 
+  message: false
+  warning: false
+  echo: false
+---
+
+# Bimodal Distribution
+
+```{r}
+
+library(rstan)
+library(loo)
+library(StanHeaders)
+library(tidyverse)
+
+mu <- 3
+sigma <- 1
+N <- 100
+```
+
+### Simple
+
+Use Stan to generate data with fixed parameters.
+
+A normal distribution, mean: `r mu`, and sigma: `r sigma`.
+
+$$ y \sim \text{Normal}(\mu,\sigma) $$
+
+```{r}
+
+mu <- 3
+sigma <- 1
+N <- 100
+
+datalist_gen <- list(mu = mu,
+                 sigma = sigma)
+
+model <- "~/R/bayes_messing_about/Stan_files/gen_normal.stan"
+
+gen_data <- rstan::stan(file = model,
+                            data = datalist_gen,
+                            chains = 4,
+                            iter = N,
+                            warmup = 0,
+                            algorithm = "Fixed_param",
+                            cores = 4)
+
+extracted_gen_data <- rstan::extract(gen_data)
+
+hist(extracted_gen_data$y)
+
+```
+
+Then use Stan to estimate parameters from this generated data.
+
+```{r}
+
+datalist_est <- list(N = N*4,
+                     y = extracted_gen_data$y)
+
+model <- "~/R/bayes_messing_about/Stan_files/est_normal.stan"
+
+est_fit <- rstan::stan(file = model,
+                            data = datalist_est,
+                            chains = 4,
+                            iter = 4000,
+                            warmup = 1000,
+                            algorithm = "NUTS",
+                            cores = 4)
+
+extracted_est_fit_n <- rstan::extract(est_fit)
+
+hist(extracted_est_fit_n$mu)
+
+# rstan::stan_plot(est_fit, pars = c("mu","sigma"))
+
+# extracted_loglik <- loo::extract_log_lik(est_fit, merge_chains = FALSE)
+# r_eff <- loo::relative_eff(extracted_loglik)
+# 
+# looic <- loo::loo(extracted_loglik, r_eff = r_eff)
+# waic <- loo::waic(extracted_loglik, r_eff = r_eff)
+
+```
+
+Stan estimates a $\mu$ of `r round(mean(extracted_est_fit_n$mu),4)`, and a $\sigma$ of `r round(mean(extracted_est_fit_n$sigma),4)`.
+
+Which is `r round(mu - mean(extracted_est_fit_n$mu),4)`, and `r round(sigma - mean(extracted_est_fit_n$sigma),4)` off reality.
+
+### Add samples
+
+More samples probably means better estimates.
+
+Though basically reaches optimality at 100 samples or so, definitely by 250.
+
+```{r, eval=FALSE}
+mu <- 3
+sigma <- 1
+samples <- seq(from = 5, to = 1000, by = 5)
+
+# mu_array <- array(data = NA, dim = length(samples))
+# sigma_array <- array(data = NA, dim = length(samples))
+# # #####
+# gen_data_df <- data.frame(matrix(ncol = 4, nrow = 0))
+# colnames(gen_data_df) <- c("mu","sigma","looic","waic")
+# 
+# datalist_gen <- list(mu = mu,
+#                  sigma = sigma)
+# 
+# model <- "./Stan_files/gen_normal.stan"
+# model_est <- "./Stan_files/est_normal.stan"
+# 
+# counter <- 0
+
+# for (i in samples){
+# 
+# counter <-  counter + 1
+# 
+# print(paste("Run",counter,"with",i,"samples"))
+# 
+# N <- i
+# 
+# gen_data <- rstan::stan(file = model,
+#                             data = datalist_gen,
+#                             chains = 4,
+#                             iter = N,
+#                             warmup = 0,
+#                             algorithm = "Fixed_param",
+#                             cores = 4)
+# 
+# extracted_gen_data <- rstan::extract(gen_data)
+# 
+# datalist_est <- list(N = N*4,
+#                      y = extracted_gen_data$y)
+# 
+# est_fit <- rstan::stan(file = model_est,
+#                             data = datalist_est,
+#                             chains = 4,
+#                             iter = 4000,
+#                             warmup = 1000,
+#                             algorithm = "NUTS",
+#                             cores = 4)
+# 
+# extracted_est_fit <- rstan::extract(est_fit) the 
+# 
+# extracted_loglik <- loo::extract_log_lik(est_fit, merge_chains = FALSE)
+# r_eff <- loo::relative_eff(extracted_loglik)
+# 
+# looic <- loo::loo(extracted_loglik, r_eff = r_eff)
+# waic <- loo::waic(extracted_loglik, r_eff = r_eff)
+# 
+# gen_data_df[nrow(gen_data_df) + 1,] <- list(extracted_est_fit$mu,extracted_est_fit$sigma,looic$estimates[3,1],waic$estimates[3,1])
+# 
+# }
+# 
+# save(gen_data_df, file = "./Data/100norms.RData")
+# 
+# ######
+```
+
+```{r}
+
+### Run this insread of stan loop above
+mu <- 3
+sigma <- 1
+samples <- seq(from = 5, to = 1000, by = 5)
+
+load(file = "~/R/bayes_messing_about/Data/100norms.RData")
+
+gen_data_df <- gen_data_df %>% add_column("samples" := samples)
+
+ggplot2::ggplot(data = gen_data_df, aes(x = samples)) +
+                  geom_point(aes(y = mu)) +
+  geom_point(aes(y = sigma)) +
+  geom_line(aes(y = mu)) +
+  geom_line(aes(y = sigma))
+
+```
+
+### Adding in noise to the signal
+
+Now for some noize.
+
+Adding in an $\epsilon$ parameter, to add to the normal distribution like in a linear regression.
+
+$$ y \sim \text{Normal}(\mu,\sigma_{\mu}) + \epsilon, ~ \epsilon \sim \text{Normal}(0,\sigma_{\epsilon}) $$
+
+```{r}
+mu <- 3
+sigma <- 1
+epsilon <- 10
+N <- 100
+```
+
+$\epsilon$ is `r epsilon`, $\sigma$ remains `r sigma`
+
+```{r}
+
+datalist_gen <- list(mu = mu,
+                 sigma_mu = sigma,
+                 sigma_epsilon = epsilon)
+
+model <- "~/R/bayes_messing_about/Stan_files/gen_normal_noise.stan"
+
+gen_data <- rstan::stan(file = model,
+                            data = datalist_gen,
+                            chains = 4,
+                            iter = N,
+                            warmup = 0,
+                            algorithm = "Fixed_param",
+                            cores = 4)
+
+extracted_gen_data <- rstan::extract(gen_data)
+
+hist(extracted_gen_data$y)
+
+```
+
+How do the estimates fare with noise.
+
+```{r}
+
+datalist_est <- list(N = N*4,
+                     y = extracted_gen_data$y)
+                     
+
+model <- "~/R/bayes_messing_about/Stan_files/est_normal_noise.stan"
+
+est_fit <- rstan::stan(file = model,
+                            data = datalist_est,
+                            chains = 4,
+                            iter = 4000,
+                            warmup = 1000,
+                            algorithm = "NUTS",
+                            cores = 4)
+
+extracted_est_fit_nn <- rstan::extract(est_fit)
+
+hist(extracted_est_fit_nn$mu)
+
+rstan::stan_plot(est_fit, pars = c("mu","sigma_mu","sigma_epsilon"))
+
+```
+
+Stan estimates a $\mu$ of `r round(mean(extracted_est_fit_nn$mu),4)`, a $\sigma$ of `r round(mean(extracted_est_fit_nn$sigma_mu),4)`, and an $\epsilon$ of `r round(mean(extracted_est_fit_nn$sigma_epsilon),4)`
+
+Which is `r round(mu - mean(extracted_est_fit_nn$mu),4)`, `r round(sigma - mean(extracted_est_fit_nn$sigma_mu),4)` , and `r round(epsilon - mean(extracted_est_fit_nn$sigma_epsilon),4)`off reality.
+
+So it struggles to unpick the noise from signal, i.e. measurement error from internal noise https://www.bmj.com/content/312/7047/1654
+
+### Priors
+
+Priors might help.
+
+```{r}
+
+sig_mu_prior <- 1
+sig_epsilon_prior <- 10
+
+```
+
+```{r}
+
+datalist_est <- list(N = N*4,
+                     y = extracted_gen_data$y,
+                     sig_mu_prior = sig_mu_prior,
+                     sig_epsilon_prior = sig_epsilon_prior)
+
+model <- "~/R/bayes_messing_about/Stan_files/est_normal_noise_priors.stan"
+
+est_fit <- rstan::stan(file = model,
+                            data = datalist_est,
+                            chains = 4,
+                            iter = 4000,
+                            warmup = 1000,
+                            algorithm = "NUTS",
+                            cores = 4)
+
+extracted_est_fit_nn <- rstan::extract(est_fit)
+
+hist(extracted_est_fit_nn$mu)
+
+rstan::stan_plot(est_fit, pars = c("mu","sigma_mu","sigma_epsilon"))
+
+rstan::traceplot(est_fit)
+
+
+```
+
+```{r, eval=FALSE}
+gen_data_df_nn <- data.frame(matrix(ncol = 5, nrow = 0))
+colnames(gen_data_df_nn) <- c("mu","sigma_mu","sigma_epsilon","sig_mu_prior","sig_epsilon_prior")
+
+counter <- 0
+
+for (i in 1:10){
+
+counter <-  counter + 1
+
+print(paste("Run",counter,"with",i))
+
+sig_mu_prior <- 11-i
+sig_epsilon_prior <- i
+
+datalist_est <- list(N = N*4,
+                     y = extracted_gen_data$y,
+                     sig_mu_prior = sig_mu_prior,
+                     sig_epsilon_prior = sig_epsilon_prior)
+
+model <- "~/R/bayes_messing_about/Stan_files/est_normal_noise_priors.stan"
+
+est_fit <- rstan::stan(file = model,
+                            data = datalist_est,
+                            chains = 4,
+                            iter = 4000,
+                            warmup = 1000,
+                            algorithm = "NUTS",
+                            cores = 4)
+
+extracted_est_fit_nn <- rstan::extract(est_fit)
+
+gen_data_df_nn[nrow(gen_data_df_nn) + 1,] <- list(extracted_est_fit_nn$mu,extracted_est_fit_nn$sigma_mu,extracted_est_fit_nn$sigma_epsilon,sig_mu_prior,sig_epsilon_prior)
+
+save(gen_data_df_nn, file = "./Data/noise_norm_priors.RData")
+
+}
+```
+
+```{r}
+#! fig.cap = Priors are incredibly informative, and the model basically regurgitates them as the estmiate. 
+
+### To save time run this instead of stan based loop beforehand 
+
+# colours <- c("sigma_mu" = "orange", "sigma_epsilon" = "cyan" ,"mu" = "purple")
+load(file = "~/R/bayes_messing_about/Data/noise_norm_priors.RData")
+
+ggplot2::ggplot(data = gen_data_df_nn) +
+                  geom_point(aes(x = sig_mu_prior, y = sigma_mu, colour = "sigma_mu")) +
+  geom_point(aes(x = sig_epsilon_prior, y = sigma_epsilon, colour = "sigma_epsilon")) +
+  geom_point(aes(x = sig_mu_prior, y = mu, colour = "mu")) +
+     labs(x = "Prior Value",
+         y = "Estimated Value",
+         colour = "Legend") 
+    # scale_color_manual(values = colours)
+  
+
+```
+
+Priors appear far too informative. The model is too basic, with noise on top of noise indistingushable, without another dimension.
+
+A better model exists within the Stan user guide \[https://mc-stan.org/docs/stan-users-guide/bayesian-measurement-error-model.html\]
+
+### Bimodal
+
+Stan can run mixture models. \[https://mc-stan.org/docs/stan-users-guide/summing-out-the-responsibility-parameter.html\]
+
+You can have a mix of $K$ normal distributions, with locations $\mu_k$, scales $\sigma_k$ and mixing proportions $\lambda$ within a $K$-simplex.
+
+$$ p_y(y~ |~ \lambda,\mu,\sigma) = \sum^{K}_{k=1}\lambda_k ~\text{Normal}(y~|~\mu_k,\sigma_k)$$
+
+```{r}
+
+mu <- c(7,14)
+sigma <- c(1,2)
+N <- 100
+K <- length(mu)
+lambda <- c(0.7,0.3)
+
+datalist_gen <- list(mu = mu,
+                 sigma = sigma,
+                 N = N,
+                 K = K,
+                 lambda = lambda)
+
+model <- "~/R/bayes_messing_about/Stan_files/gen_bimodal.stan"
+
+gen_data_b <- rstan::stan(file = model,
+                            data = datalist_gen,
+                            chains = 4,
+                            iter = 500,
+                            warmup = 0,
+                            algorithm = "Fixed_param",
+                            cores = 4)
+
+extracted_gen_data <- rstan::extract(gen_data_b)
+
+hist(extracted_gen_data$y)
+
+```
+
+And reverse estimate the parameters I put in.
+
+```{r}
+
+K <- 2
+N <- length(extracted_gen_data$y[1:10,])
+y <- as.vector(extracted_gen_data$y[1:10,])
+
+datalist_est <- list(
+                 N = N,
+                 K = K,
+                 y = y)
+
+model <- "~/R/bayes_messing_about/Stan_files/est_bimodal.stan"
+
+est_fit <- rstan::stan(file = model,
+                            data = datalist_est,
+                            chains = 4,
+                            iter = 4000,
+                            warmup = 1000,
+                            algorithm = "NUTS",
+                            cores = 4)
+
+extracted_est_fit_b <- rstan::extract(est_fit)
+
+hist(extracted_est_fit_b$mu)
+
+rstan::stan_plot(est_fit, pars = c("mu","sigma","theta"))
+
+rstan::traceplot(est_fit)
+
+```
+
+It works, but interestingly, the chains get stuck on one or the other model, so for further analysis, you would have to compare chains rather than models.
+
+When assessing parameter estimates, the mode is probably more useful than the mean or median, given this non mixing.

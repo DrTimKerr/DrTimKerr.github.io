@@ -18,3 +18,8 @@ format:
 
 editor: visual
 
+execute: 
+  freeze: auto
+  message: false
+  warning: false
+  echo: false

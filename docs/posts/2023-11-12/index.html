@@ -9,7 +9,7 @@
 <meta name="author" content="Tim">
 <meta name="dcterms.date" content="2023-11-12">
 
-<title>../../PhD_Blog - The Beta Distribution via Mean and SD</title>
+<title>../../PhD_Blog - Noise &amp; Bimodal</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -105,8 +105,12 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">The Beta Distribution via Mean and SD</h1>
-                      </div>
+      <h1 class="title">Noise &amp; Bimodal</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">r</div>
+                <div class="quarto-category">stan</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -139,27 +143,126 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>A real sticking point in trying to fit the beta distribution to the data, was working out the alpha and beta parameters to the distribution, from the mean and SD of the data.</p>
-<p>Assuming choice (expectancy rating) is drawn from a beta distribution:</p>
-<p><span class="math inline">\(Choice \sim Beta(\alpha , \beta)\)</span></p>
-<p>Then the mean and variance should be per this <a href="https://batch.libretexts.org/print/url=https://stats.libretexts.org/Courses/Saint_Mary%27s_College_Notre_Dame/MATH_345__-_Probability_%28Kuter%29/4%3A_Continuous_Random_Variables/4.8%3A_Beta_Distributions.pdf">textbook</a></p>
-<p><span class="math inline">\(\mu = \frac{\alpha}{\alpha + \beta}\)</span></p>
-<p><span class="math inline">\(\sigma^2 = \frac{\alpha\beta}{(\alpha + \beta)^2(\alpha + \beta + 1)}\)</span></p>
-<p>Thinking of the beta distribution as all the choices the participant could make based on their associative value for that trial, it makes sense to cast the mean as Value, and the variance / standard deviation as something for Stan to estimate. This variance, representing uncertainty, or optimism / pessimism, or some other set of biases, is likely to differ between participants, and indeed might vary trial to trial.</p>
-<p>The internet gives many different rearranged versions of the above equations, putting alpha and beta on the LHS. <a href="https://stats.stackexchange.com/questions/12232/calculating-the-parameters-of-a-beta-distribution-using-the-mean-and-variance">For example</a></p>
-<p><span class="math inline">\(\alpha = \left(\frac{1-\mu}{\sigma^2} - \frac{1}{\mu}\right)\mu^2\)</span></p>
-<p><span class="math inline">\(\beta=\alpha \left(\frac{1}{\mu}-1\right)\)</span></p>
-<p>However, this only works within certain bounds:</p>
-<p><span class="math inline">\(\mu \in (0,1)\)</span></p>
-<p><span class="math inline">\(\sigma^2 \in (0,0.5^2)\)</span> (given variance cannot be lower than <span class="math inline">\(\mu(1-\mu)\)</span> term</p>
-<p>So I can either constrain this parameter in Stan excessively, or find another way to estimate the parameters.</p>
-<p>This is another way:</p>
-<p><span class="math inline">\(\alpha = \mu(\frac{\mu(1 - \mu)}{\sigma - 1})\)</span></p>
-<p><span class="math inline">\(\beta = (1 - \mu)(\frac{\mu(1 - \mu)}{\sigma - 1})\)</span></p>
-<p>Gleaned from this <a href="http://quantdevel.com/CSP2017/ModelingProportionsAndProbabilities.pdf">website</a>.</p>
-<p>I’ll need to look into this, to see if it is valid. I will go with it for now, as it seems to work.</p>
+<section id="bimodal-distribution" class="level1">
+<h1>Bimodal Distribution</h1>
+<div class="cell">
+
+</div>
+<section id="simple" class="level3">
+<h3 class="anchored" data-anchor-id="simple">Simple</h3>
+<p>Use Stan to generate data with fixed parameters.</p>
+<p>A normal distribution, mean: 3, and sigma: 1.</p>
+<p><span class="math display">\[ y \sim \text{Normal}(\mu,\sigma) \]</span></p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Then use Stan to estimate parameters from this generated data.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Stan estimates a <span class="math inline">\(\mu\)</span> of 2.9781, and a <span class="math inline">\(\sigma\)</span> of 0.9763.</p>
+<p>Which is 0.0219, and 0.0237 off reality.</p>
+</section>
+<section id="add-samples" class="level3">
+<h3 class="anchored" data-anchor-id="add-samples">Add samples</h3>
+<p>More samples probably means better estimates.</p>
+<p>Though basically reaches optimality at 100 samples or so, definitely by 250.</p>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="adding-in-noise-to-the-signal" class="level3">
+<h3 class="anchored" data-anchor-id="adding-in-noise-to-the-signal">Adding in noise to the signal</h3>
+<p>Now for some noize.</p>
+<p>Adding in an <span class="math inline">\(\epsilon\)</span> parameter, to add to the normal distribution like in a linear regression.</p>
+<p><span class="math display">\[ y \sim \text{Normal}(\mu,\sigma_{\mu}) + \epsilon, ~ \epsilon \sim \text{Normal}(0,\sigma_{\epsilon}) \]</span></p>
+<div class="cell">
+
+</div>
+<p><span class="math inline">\(\epsilon\)</span> is 10, <span class="math inline">\(\sigma\)</span> remains 1</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>How do the estimates fare with noise.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Stan estimates a <span class="math inline">\(\mu\)</span> of 2.5517, a <span class="math inline">\(\sigma\)</span> of 5.0032, and an <span class="math inline">\(\epsilon\)</span> of 5.1733</p>
+<p>Which is 0.4483, -4.0032 , and 4.8267off reality.</p>
+<p>So it struggles to unpick the noise from signal, i.e.&nbsp;measurement error from internal noise https://www.bmj.com/content/312/7047/1654</p>
+</section>
+<section id="priors" class="level3">
+<h3 class="anchored" data-anchor-id="priors">Priors</h3>
+<p>Priors might help.</p>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-10-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Priors appear far too informative. The model is too basic, with noise on top of noise indistingushable, without another dimension.</p>
+<p>A better model exists within the Stan user guide [https://mc-stan.org/docs/stan-users-guide/bayesian-measurement-error-model.html]</p>
+</section>
+<section id="bimodal" class="level3">
+<h3 class="anchored" data-anchor-id="bimodal">Bimodal</h3>
+<p>Stan can run mixture models. [https://mc-stan.org/docs/stan-users-guide/summing-out-the-responsibility-parameter.html]</p>
+<p>You can have a mix of <span class="math inline">\(K\)</span> normal distributions, with locations <span class="math inline">\(\mu_k\)</span>, scales <span class="math inline">\(\sigma_k\)</span> and mixing proportions <span class="math inline">\(\lambda\)</span> within a <span class="math inline">\(K\)</span>-simplex.</p>
+<p><span class="math display">\[ p_y(y~ |~ \lambda,\mu,\sigma) = \sum^{K}_{k=1}\lambda_k ~\text{Normal}(y~|~\mu_k,\sigma_k)\]</span></p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>And reverse estimate the parameters I put in.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-14-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-14-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>It works, but interestingly, the chains get stuck on one or the other model, so for further analysis, you would have to compare chains rather than models.</p>
+<p>When assessing parameter estimates, the mode is probably more useful than the mean or median, given this non mixing.</p>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
